@@ -12,6 +12,8 @@ RUN powershell.exe -Command \
 ARG INSTALL_JDK=false
 
 # Echo the build arguments to verify they are passed correctly
+ARG STORAGE_ACCOUNT_NAME
+ARG CONTAINER_NAME
 RUN powershell.exe -Command \
   Write-Host "STORAGE_ACCOUNT_NAME: $env:STORAGE_ACCOUNT_NAME"; \
   Write-Host "CONTAINER_NAME: $env:CONTAINER_NAME"
@@ -24,8 +26,6 @@ RUN powershell.exe -Command \
   }
 
 # Download SHIR files from Azure Storage using managed identity
-ARG STORAGE_ACCOUNT_NAME
-ARG CONTAINER_NAME
 RUN powershell.exe -Command \
   $ErrorActionPreference = 'Stop'; \
   $token = (Invoke-RestMethod -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01&resource=https://storage.azure.com/" -Headers @{Metadata='true'}).access_token; \
