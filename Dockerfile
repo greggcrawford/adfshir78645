@@ -42,14 +42,10 @@ RUN powershell.exe -Command $containerName = "$env:CONTAINER_NAME"
 RUN powershell.exe -Command $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi")
 
 # Download each file
-RUN powershell.exe -Command `
-  $ErrorActionPreference = 'Stop'; `
-  $storageAccountName = "$env:STORAGE_ACCOUNT_NAME"; `
-  $containerName = "$env:CONTAINER_NAME"; `
-  $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); `
-  foreach ($file in $files) { `
-    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"; `
-    Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\$file"; `
+RUN powershell.exe -Command \
+  foreach ($file in $files) { \
+    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"; \
+    Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\$file"; \
   }
 
 
