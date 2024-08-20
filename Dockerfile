@@ -25,18 +25,20 @@ RUN powershell.exe -Command \
     Expand-Archive -Path "C:\jdk.zip" -DestinationPath "C:\jdk" \
   }
 
-# Define variables
-$storageAccountName = "acrtest8906795"
-$containerName = "acrtest"
-$files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi")
+# Re-instantiate ARG instructions
+ARG STORAGE_ACCOUNT_NAME
+ARG CONTAINER_NAME
 
-# Download files using Invoke-WebRequest
-foreach ($file in $files) {
-    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"
-    $destinationPath = "C:\SHIR\$file"
-    Invoke-WebRequest -Uri $url -OutFile $destinationPath
-    Write-Output "Downloaded $file to $destinationPath"
-}
+# Download SHIR files from Azure Storage without authentication
+RUN powershell.exe -Command \
+  $ErrorActionPreference = 'Stop'; \
+  $storageAccountName = "$env:STORAGE_ACCOUNT_NAME"; \
+  $containerName = "$env:CONTAINER_NAME"; \
+  $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); \
+  foreach ($file in $files) { \
+    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"; \
+    Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\$file"; \
+  }
 
 # Run the build script
 RUN powershell.exe -Command "C:/SHIR/build.ps1"
