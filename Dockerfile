@@ -38,16 +38,25 @@ RUN powershell.exe -Command $storageAccountName = "$env:STORAGE_ACCOUNT_NAME"
 # Set container name
 RUN powershell.exe -Command $containerName = "$env:CONTAINER_NAME"
 
-# Define files array
-RUN powershell.exe -Command $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi")
-
-# Download each file
+# Download build.ps1
 RUN powershell.exe -Command \
-  foreach ($file in $files) { \
-    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"; \
-    Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\$file"; \
-  }
+  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/build.ps1"; \
+  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\build.ps1"
 
+# Download setup.ps1
+RUN powershell.exe -Command \
+  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/setup.ps1"; \
+  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\setup.ps1"
+
+# Download health-check.ps1
+RUN powershell.exe -Command \
+  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/health-check.ps1"; \
+  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\health-check.ps1"
+
+# Download IntegrationRuntime_5.44.8984.1.msi
+RUN powershell.exe -Command \
+  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/IntegrationRuntime_5.44.8984.1.msi"; \
+  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\IntegrationRuntime_5.44.8984.1.msi"
 
 # Run the build script
 RUN powershell.exe -Command "C:/SHIR/build.ps1"
