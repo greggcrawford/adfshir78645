@@ -25,21 +25,17 @@ RUN powershell.exe -Command \
     Expand-Archive -Path "C:\jdk.zip" -DestinationPath "C:\jdk" \
   }
 
-# Download SHIR files from Azure Storage using managed identity
-RUN powershell.exe -Command \
-  $ErrorActionPreference = 'Stop'; \
-  $token = (Invoke-RestMethod -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01%26resource=https://storage.azure.com/" -Headers @{Metadata='true'}).access_token; \
-  Write-Host "token: $token"
+# Re-instantiate ARG instructions
+ARG STORAGE_ACCOUNT_NAME
+ARG CONTAINER_NAME
 
-# Download SHIR files from Azure Storage using managed identity
+# Download SHIR files from Azure Storage using Azure CLI and managed identity
 RUN powershell.exe -Command \
   $ErrorActionPreference = 'Stop'; \
-  $token = (Invoke-RestMethod -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01%26resource=https://storage.azure.com/" -Headers @{Metadata='true'}).access_token; \
-  $headers = @{ Authorization = "Bearer $token" }; \
+  az login --identity; \
   $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); \
   foreach ($file in $files) { \
-    $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/$file"; \
-    Invoke-WebRequest -Uri $url -Headers $headers -OutFile "C:\SHIR\$file" \
+    az storage blob download --account-name $env:STORAGE_ACCOUNT_NAME --container-name $env:CONTAINER_NAME --name $file --file "C:\SHIR\$file" --auth-mode login \
   }
 
 # Run the build script
