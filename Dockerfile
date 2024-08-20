@@ -32,10 +32,12 @@ ARG CONTAINER_NAME
 # Download SHIR files from Azure Storage using Azure CLI and managed identity
 RUN powershell.exe -Command \
   $ErrorActionPreference = 'Stop'; \
-  az login --identity; \
+  az login --identity
+
+RUN powershell.exe -Command \
   $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); \
   foreach ($file in $files) { \
-    az storage blob download --account-name $env:STORAGE_ACCOUNT_NAME --container-name $env:CONTAINER_NAME --name $file --file "C:\SHIR\$file" --auth-mode login \
+    az storage blob download --account-name "$env:STORAGE_ACCOUNT_NAME" --container-name "$env:CONTAINER_NAME" --name $file --file "C:\SHIR\$file" --auth-mode login \
   }
 
 # Run the build script
