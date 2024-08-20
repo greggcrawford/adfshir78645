@@ -31,17 +31,37 @@ RUN powershell.exe -Command $ErrorActionPreference = 'Stop'
 # Create the directory
 RUN powershell.exe -Command New-Item -ItemType Directory -Path "C:\SHIR"
 
-# Download build.ps1
-RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/build.ps1" -OutFile "C:\SHIR\build.ps1"
+# Download build.ps1 and validate
+RUN powershell.exe -Command \
+  $startTime = Get-Date; \
+  Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/build.ps1" -OutFile "C:\SHIR\build.ps1"; \
+  $endTime = Get-Date; \
+  Write-Host "Downloaded build.ps1 at $endTime, duration: $($endTime - $startTime)"; \
+  type "C:\SHIR\build.ps1"
 
-# Download setup.ps1
-RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/setup.ps1" -OutFile "C:\SHIR\setup.ps1"
+# Download setup.ps1 and validate
+RUN powershell.exe -Command \
+  $startTime = Get-Date; \
+  Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/setup.ps1" -OutFile "C:\SHIR\setup.ps1"; \
+  $endTime = Get-Date; \
+  Write-Host "Downloaded setup.ps1 at $endTime, duration: $($endTime - $startTime)"; \
+  type "C:\SHIR\setup.ps1"
 
-# Download health-check.ps1
-RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/health-check.ps1" -OutFile "C:\SHIR\health-check.ps1"
+# Download health-check.ps1 and validate
+RUN powershell.exe -Command \
+  $startTime = Get-Date; \
+  Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/health-check.ps1" -OutFile "C:\SHIR\health-check.ps1"; \
+  $endTime = Get-Date; \
+  Write-Host "Downloaded health-check.ps1 at $endTime, duration: $($endTime - $startTime)"; \
+  type "C:\SHIR\health-check.ps1"
 
-# Download IntegrationRuntime_5.44.8984.1.msi
-RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/IntegrationRuntime_5.44.8984.1.msi" -OutFile "C:\SHIR\IntegrationRuntime_5.44.8984.1.msi"
+# Download IntegrationRuntime_5.44.8984.1.msi and validate
+RUN powershell.exe -Command \
+  $startTime = Get-Date; \
+  Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/IntegrationRuntime_5.44.8984.1.msi" -OutFile "C:\SHIR\IntegrationRuntime_5.44.8984.1.msi"; \
+  $endTime = Get-Date; \
+  $fileInfo = Get-Item "C:\SHIR\IntegrationRuntime_5.44.8984.1.msi"; \
+  Write-Host "Downloaded IntegrationRuntime_5.44.8984.1.msi at $endTime, duration: $($endTime - $startTime), size: $($fileInfo.Length) bytes"
 
 # Run the build script
 RUN powershell.exe -Command "C:/SHIR/build.ps1"
