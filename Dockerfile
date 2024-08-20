@@ -28,6 +28,9 @@ RUN powershell.exe -Command \
 # Set ErrorActionPreference
 RUN powershell.exe -Command $ErrorActionPreference = 'Stop'
 
+# Create the directory
+RUN powershell.exe -Command New-Item -ItemType Directory -Path "C:\SHIR"
+
 # Download build.ps1
 RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/build.ps1" -OutFile "C:\SHIR\build.ps1"
 
