@@ -25,38 +25,20 @@ RUN powershell.exe -Command \
     Expand-Archive -Path "C:\jdk.zip" -DestinationPath "C:\jdk" \
   }
 
-# Re-instantiate ARG instructions
-ARG STORAGE_ACCOUNT_NAME
-ARG CONTAINER_NAME
-
 # Set ErrorActionPreference
 RUN powershell.exe -Command $ErrorActionPreference = 'Stop'
 
-# Set storage account name
-RUN powershell.exe -Command $storageAccountName = "$env:STORAGE_ACCOUNT_NAME"
-
-# Set container name
-RUN powershell.exe -Command $containerName = "$env:CONTAINER_NAME"
-
 # Download build.ps1
-RUN powershell.exe -Command \
-  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/build.ps1"; \
-  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\build.ps1"
+RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/build.ps1" -OutFile "C:\SHIR\build.ps1"
 
 # Download setup.ps1
-RUN powershell.exe -Command \
-  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/setup.ps1"; \
-  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\setup.ps1"
+RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/setup.ps1" -OutFile "C:\SHIR\setup.ps1"
 
 # Download health-check.ps1
-RUN powershell.exe -Command \
-  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/health-check.ps1"; \
-  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\health-check.ps1"
+RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/health-check.ps1" -OutFile "C:\SHIR\health-check.ps1"
 
 # Download IntegrationRuntime_5.44.8984.1.msi
-RUN powershell.exe -Command \
-  $url = "https://$env:STORAGE_ACCOUNT_NAME.blob.core.windows.net/$env:CONTAINER_NAME/IntegrationRuntime_5.44.8984.1.msi"; \
-  Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\IntegrationRuntime_5.44.8984.1.msi"
+RUN powershell.exe -Command Invoke-WebRequest -Uri "https://acrtest8906795.blob.core.windows.net/acrtest/IntegrationRuntime_5.44.8984.1.msi" -OutFile "C:\SHIR\IntegrationRuntime_5.44.8984.1.msi"
 
 # Run the build script
 RUN powershell.exe -Command "C:/SHIR/build.ps1"
