@@ -29,16 +29,29 @@ RUN powershell.exe -Command \
 ARG STORAGE_ACCOUNT_NAME
 ARG CONTAINER_NAME
 
-# Download SHIR files from Azure Storage without authentication
-RUN powershell.exe -Command \
-  $ErrorActionPreference = 'Stop'; \
-  $storageAccountName = "$env:STORAGE_ACCOUNT_NAME"; \
-  $containerName = "$env:CONTAINER_NAME"; \
-  $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); \
-  foreach ($file in $files) { \
-    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"; \
-    Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\$file"; \
+# Set ErrorActionPreference
+RUN powershell.exe -Command $ErrorActionPreference = 'Stop'
+
+# Set storage account name
+RUN powershell.exe -Command $storageAccountName = "$env:STORAGE_ACCOUNT_NAME"
+
+# Set container name
+RUN powershell.exe -Command $containerName = "$env:CONTAINER_NAME"
+
+# Define files array
+RUN powershell.exe -Command $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi")
+
+# Download each file
+RUN powershell.exe -Command `
+  $ErrorActionPreference = 'Stop'; `
+  $storageAccountName = "$env:STORAGE_ACCOUNT_NAME"; `
+  $containerName = "$env:CONTAINER_NAME"; `
+  $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); `
+  foreach ($file in $files) { `
+    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"; `
+    Invoke-WebRequest -Uri $url -OutFile "C:\SHIR\$file"; `
   }
+
 
 # Run the build script
 RUN powershell.exe -Command "C:/SHIR/build.ps1"
