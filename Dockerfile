@@ -28,7 +28,7 @@ RUN powershell.exe -Command \
 # Download SHIR files from Azure Storage using managed identity
 RUN powershell.exe -Command \
   $ErrorActionPreference = 'Stop'; \
-  $token = (Invoke-RestMethod -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01&resource=https://storage.azure.com/" -Headers @{Metadata='true'}).access_token; \
+  $token = (Invoke-RestMethod -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01%26resource=https://storage.azure.com/" -Headers @{Metadata='true'}).access_token; \
   $headers = @{Authorization = "Bearer $token"}; \
   $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); \
   foreach ($file in $files) { \
