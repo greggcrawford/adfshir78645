@@ -25,17 +25,18 @@ RUN powershell.exe -Command \
     Expand-Archive -Path "C:\jdk.zip" -DestinationPath "C:\jdk" \
   }
 
-# Re-instantiate ARG instructions
-ARG STORAGE_ACCOUNT_NAME
-ARG CONTAINER_NAME
+# Define variables
+$storageAccountName = "acrtest8906795"
+$containerName = "acrtest"
+$files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi")
 
-# Download SHIR files from Azure Storage without authentication
-RUN powershell.exe -Command \
-  $ErrorActionPreference = 'Stop'; \
-  $files = @("build.ps1", "setup.ps1", "health-check.ps1", "IntegrationRuntime_5.44.8984.1.msi"); \
-  foreach ($file in $files) { \
-    az storage blob download --account-name "$env:STORAGE_ACCOUNT_NAME" --container-name "$env:CONTAINER_NAME" --name $file --file "C:\SHIR\$file" --auth-mode key \
-  }
+# Download files using Invoke-WebRequest
+foreach ($file in $files) {
+    $url = "https://$storageAccountName.blob.core.windows.net/$containerName/$file"
+    $destinationPath = "C:\SHIR\$file"
+    Invoke-WebRequest -Uri $url -OutFile $destinationPath
+    Write-Output "Downloaded $file to $destinationPath"
+}
 
 # Run the build script
 RUN powershell.exe -Command "C:/SHIR/build.ps1"
