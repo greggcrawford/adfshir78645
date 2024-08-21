@@ -2,21 +2,21 @@
 FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 # Install Azure CLI
-RUN powershell.exe -Command \
-  $ErrorActionPreference = 'Stop'; \
-  Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile AzureCLI.msi; \
-  Start-Process msiexec.exe -ArgumentList '/I AzureCLI.msi /quiet' -NoNewWindow -Wait; \
-  Remove-Item -Force AzureCLI.msi
+# RUN powershell.exe -Command \
+#   $ErrorActionPreference = 'Stop'; \
+#   Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile AzureCLI.msi; \
+#   Start-Process msiexec.exe -ArgumentList '/I AzureCLI.msi /quiet' -NoNewWindow -Wait; \
+#   Remove-Item -Force AzureCLI.msi
 
 # ARG to determine if JDK should be installed
 ARG INSTALL_JDK=false
 
 # Echo the build arguments to verify they are passed correctly
-ARG STORAGE_ACCOUNT_NAME
-ARG CONTAINER_NAME
-RUN powershell.exe -Command \
-  Write-Host "STORAGE_ACCOUNT_NAME: $env:STORAGE_ACCOUNT_NAME"; \
-  Write-Host "CONTAINER_NAME: $env:CONTAINER_NAME"
+# ARG STORAGE_ACCOUNT_NAME
+# ARG CONTAINER_NAME
+# RUN powershell.exe -Command \
+#   Write-Host "STORAGE_ACCOUNT_NAME: $env:STORAGE_ACCOUNT_NAME"; \
+#   Write-Host "CONTAINER_NAME: $env:CONTAINER_NAME"
 
 # Download and install Microsoft's JDK 11 LTS if required
 RUN powershell.exe -Command \
